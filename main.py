@@ -7,25 +7,25 @@ TILE_SIZE = 16
 TILE_SCALE = 4
 
 # Load stone sprites
-stone_sprites = pygame.transform.scale(pygame.image.load_basic("textures/stone_textures.bmp"), (TILE_SIZE * TILE_SCALE * 7, TILE_SIZE * TILE_SCALE))
+stone_sprites = pygame.image.load_basic("textures/stone_textures.bmp")
 stone_textures = []
 for i in range(7):
     stone_textures.append(stone_sprites.subsurface(
-        pygame.rect.Rect(TILE_SIZE * i, 0, TILE_SIZE * TILE_SCALE, TILE_SIZE * TILE_SCALE)))
+        pygame.rect.Rect(TILE_SIZE * i, 0, TILE_SIZE, TILE_SIZE)))
 
 # Load grass sprites
-grass_sprites = pygame.transform.scale(pygame.image.load_basic("textures/grass_textures.bmp"), (TILE_SIZE * TILE_SCALE * 7, TILE_SIZE * TILE_SCALE))
+grass_sprites = pygame.image.load_basic("textures/grass_textures.bmp")
 grass_textures = []
 for i in range(7):
     grass_textures.append(grass_sprites.subsurface(
-        pygame.rect.Rect(TILE_SIZE * i, 0, TILE_SIZE * TILE_SCALE, TILE_SIZE * TILE_SCALE)))
+        pygame.rect.Rect(TILE_SIZE * i, 0, TILE_SIZE, TILE_SIZE)))
 
 # Load water sprites
-water_sprites = pygame.transform.scale(pygame.image.load_basic("textures/water_textures.bmp"), (TILE_SIZE * TILE_SCALE * 7, TILE_SIZE * TILE_SCALE))
+water_sprites = pygame.image.load_basic("textures/water_textures.bmp")
 water_textures = []
 for i in range(7):
     water_textures.append(water_sprites.subsurface(
-        pygame.rect.Rect(TILE_SIZE * i, 0, TILE_SIZE * TILE_SCALE, TILE_SIZE * TILE_SCALE)))
+        pygame.rect.Rect(TILE_SIZE * i, 0, TILE_SIZE, TILE_SIZE)))
 
 textures = [0, stone_textures, grass_textures, water_textures]                                                          
 
@@ -144,12 +144,12 @@ while running:
             
         frames += 1
         world_data = world_view.get_visible()
-        world_render = pygame.Surface((world_view.width * TILE_SIZE * TILE_SCALE, world_view.height * TILE_SIZE * TILE_SCALE))
+        world_render = pygame.Surface((world_view.width * TILE_SIZE, world_view.height * TILE_SIZE))
         for y, row in enumerate(world_data):
             for x, value in enumerate(row):
-                world_render.blit(textures[value][tile_type[y][x]], (x * TILE_SIZE * TILE_SCALE, y * TILE_SIZE * TILE_SCALE))
+                world_render.blit(textures[value][tile_type[y][x]], (x * TILE_SIZE, y * TILE_SIZE))
 
-        window.blit(world_render, ((width // 2) - (world_render.get_width() // 2), (height // 2) - (world_render.get_height() // 2)))
+        window.blit(pygame.transform.scale(world_render, (world_view.width * TILE_SIZE * TILE_SCALE, world_view.height * TILE_SIZE * TILE_SCALE)), ((width // 2) - (world_render.get_width() // 2), (height // 2) - (world_render.get_height() // 2)))
         
         window.blit(frame_render, (0, 0))
         pygame.display.update()
