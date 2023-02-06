@@ -3,9 +3,31 @@ from enum import IntEnum
 import random
 import time
 
-TILE_SIZE = 4
+TILE_SIZE = 16
+TILE_SCALE = 4
 
-colors = [0, (50, 50, 50), (77, 171, 56), (49, 99, 153)]
+# Load stone sprites
+stone_sprites = pygame.transform.scale(pygame.image.load_basic("textures/stone_textures.bmp"), (TILE_SIZE * TILE_SCALE * 7, TILE_SIZE * TILE_SCALE))
+stone_textures = []
+for i in range(7):
+    stone_textures.append(stone_sprites.subsurface(
+        pygame.rect.Rect(TILE_SIZE * i, 0, TILE_SIZE * TILE_SCALE, TILE_SIZE * TILE_SCALE)))
+
+# Load grass sprites
+grass_sprites = pygame.transform.scale(pygame.image.load_basic("textures/grass_textures.bmp"), (TILE_SIZE * TILE_SCALE * 7, TILE_SIZE * TILE_SCALE))
+grass_textures = []
+for i in range(7):
+    grass_textures.append(grass_sprites.subsurface(
+        pygame.rect.Rect(TILE_SIZE * i, 0, TILE_SIZE * TILE_SCALE, TILE_SIZE * TILE_SCALE)))
+
+# Load water sprites
+water_sprites = pygame.transform.scale(pygame.image.load_basic("textures/water_textures.bmp"), (TILE_SIZE * TILE_SCALE * 7, TILE_SIZE * TILE_SCALE))
+water_textures = []
+for i in range(7):
+    water_textures.append(water_sprites.subsurface(
+        pygame.rect.Rect(TILE_SIZE * i, 0, TILE_SIZE * TILE_SCALE, TILE_SIZE * TILE_SCALE)))
+
+textures = [0, stone_textures, grass_textures, water_textures]                                                          
 
 
 class Tile(IntEnum):
@@ -67,7 +89,6 @@ def load_world(name):
     return world
 
 
-
 # Initalise window.
 pygame.init()
 window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
@@ -78,8 +99,8 @@ height = window.get_height()
 
 # World gen
 world = [[random.randint(1, 3) for _ in range(1000)] for __ in range(1000)]
+tile_type = [[random.randint(0, 6) for _ in range(1000)] for __ in range(1000)]
 world_view = Viewport(world, (len(world[0]) // 2, len(world) // 2), (width // TILE_SIZE) + 1, (height // TILE_SIZE) + 1)
-
 
 # Framerate tracking.
 last_update = time.time()
@@ -123,10 +144,10 @@ while running:
             
         frames += 1
         world_data = world_view.get_visible()
-        world_render = pygame.Surface((world_view.width * TILE_SIZE, world_view.height * TILE_SIZE))
+        world_render = pygame.Surface((world_view.width * TILE_SIZE * TILE_SCALE, world_view.height * TILE_SIZE * TILE_SCALE))
         for y, row in enumerate(world_data):
             for x, value in enumerate(row):
-                pygame.draw.rect(world_render, colors[value], pygame.rect.Rect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE))
+                world_render.blit(textures[value][tile_type[y][x]], (x * TILE_SIZE * TILE_SCALE, y * TILE_SIZE * TILE_SCALE))
 
         window.blit(world_render, ((width // 2) - (world_render.get_width() // 2), (height // 2) - (world_render.get_height() // 2)))
         
